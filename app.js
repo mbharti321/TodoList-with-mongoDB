@@ -13,7 +13,9 @@ app.use(express.static("public"));
 
 
 
-mongoose.connect("mongodb://localhost:27017/todolistDb");
+// mongoose.connect("mongodb://localhost:27017/todolistDb");
+const dataBaseUrl = "mongodb+srv://admin-manish:Test123@cluster0.uzggf.mongodb.net";
+mongoose.connect(dataBaseUrl + "/todolistDB");
 
 const itemsSchema = mongoose.Schema({
   name: String
