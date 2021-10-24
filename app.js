@@ -14,7 +14,7 @@ app.use(express.static("public"));
 
 
 // mongoose.connect("mongodb://localhost:27017/todolistDb");
-const dataBaseUrl = "mongodb+srv://admin-manish:Test123@cluster0.uzggf.mongodb.net";
+const dataBaseUrl = "mongodb+srv://admin-manish:<password>@cluster0.uzggf.mongodb.net";
 mongoose.connect(dataBaseUrl + "/todolistDB");
 
 const itemsSchema = mongoose.Schema({
@@ -98,13 +98,6 @@ app.post("/", function (req, res) {
 
 });
 
-app.get("/work", function (req, res) {
-  res.render("list", { listTitle: "Work List", newListItems: workItems });
-});
-
-app.get("/about", function (req, res) {
-  res.render("about");
-});
 
 // custom url
 app.get("/:customListName", function (req, res) {
