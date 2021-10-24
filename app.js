@@ -71,11 +71,29 @@ app.get("/", function (req, res) {
 app.post("/", function (req, res) {
 
   const newItem = req.body.newItem;
+  const listName = req.body.list;
+
   const item = new Item({
     name: newItem
   });
-  item.save();
-  res.redirect("/");
+
+  if (listName === "Today") {
+    // "add" request came from default list "Today",list
+    item.save();
+    res.redirect("/");
+  }else{
+    // "add" request came from custom list
+    List.findOne({name:listName}, function(err, foundList){
+      if(!err){
+        foundList.items.push(item);
+        foundList.save();
+        res.redirect("/"+ listName);
+      }
+    })
+  }
+
+
+
 });
 
 app.get("/work", function (req, res) {
@@ -87,15 +105,15 @@ app.get("/about", function (req, res) {
 });
 
 // custom url
-app.get("/:customListName", function(req, res){
+app.get("/:customListName", function (req, res) {
   // console.log(req.params.customListName);
-  const customListName =  req.params.customListName;
-  List.findOne({name: customListName}, function(err, foundList){
-    if(err){
+  const customListName = req.params.customListName;
+  List.findOne({ name: customListName }, function (err, foundList) {
+    if (err) {
       console.log(err);
-    }else{
+    } else {
       // list doesn't exist
-      if(!foundList){
+      if (!foundList) {
         // console.log("doesnt exist");
         // create new list
         const list = new List({
@@ -103,21 +121,21 @@ app.get("/:customListName", function(req, res){
           items: defaultItems
         });
         list.save();
-        res.redirect("/" +customListName);
-      }else{
+        res.redirect("/" + customListName);
+      } else {
         // list already exist
         // print all list item
         // console.log(foundList.name);
         res.render("list", {
-          listTitle:customListName, 
+          listTitle: customListName,
           newListItems: foundList.items
         });
       }
     }
   });
-  
-  
-  
+
+
+
 });
 
 app.post("/delete", function (req, res) {
