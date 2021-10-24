@@ -3,6 +3,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const e = require("express");
 // const date = require(__dirname + "/date.js");
 
 const app = express();
@@ -31,6 +32,17 @@ const item3 = new Item({
 });
 
 const defaultItems = [item1, item2, item3];
+
+// different list schema
+const listSchema = {
+  name: String,
+  items: [itemsSchema]
+};
+const List = mongoose.model("List", listSchema);
+
+
+
+
 
 app.get("/", function (req, res) {
   // const day = date.getDate();
@@ -72,6 +84,40 @@ app.get("/work", function (req, res) {
 
 app.get("/about", function (req, res) {
   res.render("about");
+});
+
+// custom url
+app.get("/:customListName", function(req, res){
+  // console.log(req.params.customListName);
+  const customListName =  req.params.customListName;
+  List.findOne({name: customListName}, function(err, foundList){
+    if(err){
+      console.log(err);
+    }else{
+      // list doesn't exist
+      if(!foundList){
+        // console.log("doesnt exist");
+        // create new list
+        const list = new List({
+          name: customListName,
+          items: defaultItems
+        });
+        list.save();
+        res.redirect("/" +customListName);
+      }else{
+        // list already exist
+        // print all list item
+        // console.log(foundList.name);
+        res.render("list", {
+          listTitle:customListName, 
+          newListItems: foundList.items
+        });
+      }
+    }
+  });
+  
+  
+  
 });
 
 app.post("/delete", function (req, res) {
