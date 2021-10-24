@@ -67,6 +67,9 @@ button {
   padding-bottom: 6px;
   border-width: 0;
 }
+button:hover{
+  cursor: pointer;
+}
 
 input[type="text"] {
   text-align: center;
